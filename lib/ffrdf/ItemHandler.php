@@ -9,25 +9,14 @@ class ItemHandler
 	var $r;
 	var $endpoint;
 	
-	function __construct( $f3, $uri )
+	function __construct( $f3, $uri, $g=null )
 	{
 		$this->f3 = $f3;
 		$this->uri = $uri;
-		$this->initGraph();
+		if( !isset( $g ) ) { $g = ffrdf_initGraph( $f3 ); }
+		$this->g = $g;
 		$this->r = $this->g->resource( $uri );
 		$this->endpoint = $f3->get( "sparql_endpoint" );
-	}
-	
-	function initGraph()
-	{
-		$this->g = new Graphite();
-		$this->g->workAround4StoreBNodeBug = true;
-
-		# add the site namespaces to this graph
-		foreach( $this->f3->get("ns") as $k=>$v ) 
-		{ 
-			$this->g->ns( $k, $v );
-		}
 	}
 	
 	var $sparql_path = "./(a|rdfs:label)?";
@@ -67,13 +56,7 @@ class ItemHandler
 
 		$format = $this->f3->get( "format" );
 	
-		if( $format == "map" )
-		{
-			# hmm. Might be better to do this with the already 
-			# loaded graph...
-			return mapView( $this->uri, $this->f3->get( "sparql_endpoint" ) );
-		}
-		if( $format == "raw" )  
+		if( $format == "raw" )  #TODO
 		{
 			$this->f3->set('brand_file', $this->f3->get('raw_template'));
 			return $this->serveHTML(); 

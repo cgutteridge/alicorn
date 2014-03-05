@@ -1,0 +1,17 @@
+<div style='float:right; margin: 0 0 1em 1em;text-align:center'>
+<include href="picture.htm" />
+</div>
+
+<p>A genre.</p>
+
+<p>{{ @resource->getLanguageLiteral( "dbo:abstract" ) }}</p>
+
+<check if="{{ @resource->has( 'dbo:derivative' ) }}">
+  <p><strong>Derivative genres:</strong> <repeat group="{{ @resource->all( 'dbo:derivative' ) }}" value="{{ @g2 }}" counter="{{ @i }}"><check if="{{ @i>1 }}">, </check>{{ ffrdf_prettyLink(@g2) }}</repeat>.</p>
+</check>
+<check if="{{ @resource->has( 'dbo:musicSubgenre' ) }}">
+  <p><strong>Subgenres:</strong> <repeat group="{{ @resource->all( 'dbo:musicSubgenre' ) }}" value="{{ @g2 }}" counter="{{ @i }}"><check if="{{ @i>1 }}">, </check>{{ ffrdf_prettyLink(@g2) }}</repeat>.</p>
+</check>
+<check if="{{ @resource->has( 'dbo:stylisticOrigin' ) }}">
+  <p><strong>Stylistic origins:</strong> <repeat group="{{ @resource->all( 'dbo:stylisticOrigin' ) }}" value="{{ @g2 }}" counter="{{ @i }}"><check if="{{ @i>1 }}">, </check>{{ ffrdf_prettyLink(@g2) }}</repeat>.</p>
+</check>

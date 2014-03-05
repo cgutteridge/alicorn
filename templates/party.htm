@@ -1,21 +1,19 @@
 <div style='float:right; margin: 0 0 1em 1em;text-align:center'>
-<include href="map.htm" />
 <include href="picture.htm" />
 </div>
 
-<p>A city.</p>
+<p>A political party.</p>
+
 <p>{{ @resource->getLanguageLiteral( "dbo:abstract" ) }}</p>
 
-<check if="{{ @resource->has( '-dbo:birthPlace' ) }}">
-  <h2>People born in {{ @resource->label() }}</h2>
-  <repeat group="{{ @resource->all( '-dbo:birthPlace' ) }}" value="{{ @person }}">
+<check if="{{ @resource->has( '-dbo:party' ) }}">
+  <h2>The party of:</h2>
+  <repeat group="{{ @resource->all( '-dbo:party' ) }}" value="{{ @person }}">
     <h3>{{ ffrdf_prettyLink(@person) }}</h3>
     <p>{{ @person->getLanguageLiteral( "dbo:abstract" ) }}</p>
-    <check if="{{ @person->has( 'dbo:party' ) }}">
-      <p>Party: <repeat group="{{ @person->all( 'dbo:party' ) }}" value="{{ @party }}" counter="{{ @i }}"><check if="{{ @i>1 }}">, </check>{{ ffrdf_prettyLink(@party) }}</repeat>.</p>
-    </check>
     <check if="{{ @person->has( 'dbo:genre' ) }}">
       <p>Genre: <repeat group="{{ @person->all( 'dbo:genre' ) }}" value="{{ @genre }}" counter="{{ @i }}"><check if="{{ @i>1 }}">, </check>{{ ffrdf_prettyLink(@genre) }}</repeat>.</p>
     </check>
   </repeat>
 </check>
+  
