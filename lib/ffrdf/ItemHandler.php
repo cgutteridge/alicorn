@@ -1,4 +1,5 @@
 <?php
+
 	
 class ItemHandler
 {
@@ -21,13 +22,12 @@ class ItemHandler
 	{
 		$this->g = new Graphite();
 		$this->g->workAround4StoreBNodeBug = true;
-		$this->g->ns( "sr","http://data.ordnancesurvey.co.uk/ontology/spatialrelations/" );
-		$this->g->ns( "soton","http://id.southampton.ac.uk/ns/" );
-		$this->g->ns( "rooms","http://vocab.deri.ie/rooms#" );
-		$this->g->ns( "geo","http://www.w3.org/2003/01/geo/wgs84_pos#" );
-		$this->g->ns( "dct","http://purl.org/dc/terms/" );
-		$this->g->ns( "event","http://purl.org/NET/c4dm/event.owl#" );
-		$this->g->ns( "gr","http://purl.org/goodrelations/v1#" );
+
+		# add the site namespaces to this graph
+		foreach( $this->f3->get("ns") as $k=>$v ) 
+		{ 
+			$this->g->ns( $k, $v );
+		}
 	}
 	
 	var $sparql_path = "./(a|rdfs:label)?";
@@ -40,10 +40,10 @@ class ItemHandler
 
 	function loadSPARQLPath( $path )
 	{
-		$n = $this->r->loadSPARQLPath( 
-			$this->endpoint, 
-			$path, 
-			array( "sparql-params"=>$this->f3->get("sparql_params") ) );
+		$opts =	array();
+		$opts["sparql-params"] = $this->f3->get("sparql_params");
+		$opts["union-then-sequence"] = true;
+		$n = $this->r->loadSPARQLPath( $this->endpoint, $path, $opts );
 		return $n;
 	}
 

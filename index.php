@@ -14,12 +14,24 @@ $f3->config('config.ini');
 $f3->set( "uri_base", "http://dbpedia.org/resource" );
 $f3->set( "sparql_endpoint", "http://dbpedia.org/sparql" );
 $f3->set( "sparql_params", array( "format"=>"application/rdf+xml" ) );
+$f3->set( "identity_path", "a"); // the sparql path to identify if a resource exists. Must include rdf:type
+$f3->set( "identity_path", "a|rdfs:label");
 $f3->set( "type_map", array(
         array( "type" => "http://dbpedia.org/ontology/City", "handler" => "city" ),     
 ));
 $f3->set( "default_handler", "default" );
 $f3->set( "html", "html.htm" ); // the outer HTML layout 
 $f3->set( "template", "template.htm" ); // the template inside <body> 
+
+$f3->set( "ns", new ArrayObject() );
+$f3->get("ns")->offsetSet(" geo","http://www.w3.org/2003/01/geo/wgs84_pos#" );
+$f3->get("ns")->offsetSet( "sr","http://data.ordnancesurvey.co.uk/ontology/spatialrelations/" );
+$f3->get("ns")->offsetSet( "soton","http://id.southampton.ac.uk/ns/" );
+$f3->get("ns")->offsetSet( "rooms","http://vocab.deri.ie/rooms#" );
+$f3->get("ns")->offsetSet( "dct","http://purl.org/dc/terms/" );
+$f3->get("ns")->offsetSet( "event","http://purl.org/NET/c4dm/event.owl#" );
+$f3->get("ns")->offsetSet( "gr","http://purl.org/goodrelations/v1#" );
+$f3->get("ns")->offsetSet( "dbo","http://dbpedia.org/ontology/" );
 
 // Homepage
 $f3->route('GET /',
@@ -51,7 +63,44 @@ function getRelatedURI( $f3, $params )
 	return $uri;
 }
 
+function localPathToURI( $path )
+{
+	$f3 = Base::instance();
+
+	# ignore everything after a "?"
+	@list( $path, $querystring ) = explode("?", $path, 2);
+	
+	# remove any format suffix
+	$path_sans_suffix = preg_replace( '/\.[^\/]*/', '', $path );
+	
+	$uri = $f3->get( "uri_base" ).$path_sans_suffix;
+	return $uri;	
+}
+
+function URIToLocalURL( $uri )
+{
+	$f3 = Base::instance();
+
+	if( strpos( $uri, $f3->get( "uri_base" ) ) !== 0 )
+	{
+		# URI does not start with uri_base so return as-is
+		return $uri;
+	}
+
+	$path = substr( $uri, strlen($f3->get( "uri_base" )) );
+
+	return "$path.html";	
+}
+
+
 /// Library
+
+function ffrdf_prettyLink( $resource )
+{
+	$label = $resource->uri;
+	if( $resource->hasLabel() ) { $label = $resource->label(); }
+	return "<a title='".$resource->uri."' href='".URIToLocalURL($resource->uri)."'>$label</a>";
+}
 
 function debugView( $f3, $params )
 {
@@ -69,13 +118,13 @@ function negotiate($f3)
 
 function pageView($f3, $params)
 {	      
-	$uri = getRelatedURI($f3,$params);
-
+	$uri = localPathToURI($f3->get("URI"));
 	$graph = new Graphite();
 	$resource = $graph->resource( $uri );
 	$n = $resource->loadSPARQLPath( 
 		$f3->get( "sparql_endpoint" ), 
-		"a", array( "sparql-params"=>$f3->get("sparql_params") ) );
+		$f3->get( "identity_path" ), 
+		array( "sparql-params"=>$f3->get("sparql_params") ) );
 
 	if( $n == 0 )
 	{
