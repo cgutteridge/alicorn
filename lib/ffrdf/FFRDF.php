@@ -3,6 +3,9 @@
 require('lib/arc2/ARC2.php');
 require('lib/Graphite/Graphite.php');
 require('lib/ffrdf/ItemHandler.php');
+$f3 = require_once( "lib/base.php" );
+
+class FFRDF extends Prefab {
 
 function localPathToURI( $path )
 {
@@ -36,7 +39,7 @@ function URIToLocalURL( $uri )
 
 /// Library
 
-function ffrdf_initGraph( $f3 )
+function initGraph( $f3 )
 {
 	$g = new Graphite();
 	$g->workAround4StoreBNodeBug = true;
@@ -51,11 +54,11 @@ function ffrdf_initGraph( $f3 )
 }
 	
 
-function ffrdf_prettyLink( $resource )
+function prettyLink( $resource )
 {
 	$label = $resource->uri;
 	if( $resource->hasLabel() ) { $label = $resource->label(); }
-	return "<a title='".$resource->uri."' href='".URIToLocalURL($resource->uri)."'>$label</a>";
+	return "<a title='".$resource->uri."' href='".$this->URIToLocalURL($resource->uri)."'>$label</a>";
 }
 
 function debugView( $f3, $params )
@@ -74,8 +77,8 @@ function negotiate($f3)
 
 function pageView($f3, $params)
 {	      
-	$uri = localPathToURI($f3->get("URI"));
-	$graph = ffrdf_initGraph( $f3 ); 
+	$uri = $this->localPathToURI($f3->get("URI"));
+	$graph = $this->initGraph( $f3 ); 
 	$resource = $graph->resource( $uri );
 
 	if( $f3->get( "data_mode" ) == "SPARQL" )
@@ -99,34 +102,43 @@ function pageView($f3, $params)
 		exit();
 	}      
 
-	$type_config = array( "handler" => $f3->get('default_handler') );
+	$type_config = array( "handler" => $f3->get('default_handler'), "id"=>"default" );
 
 	# try types in order
-	foreach( $f3->get( "type_map" ) as $type_i )
+	foreach( $f3->get( "class_order" ) as $class_id )
 	{
-		$type_i_uri = $graph->expandURI( $type_i["type"] );
+		$class = $f3->get( "class.$class_id" );
+		$type_i_uri = $graph->expandURI( $class["rdf_type"] );
 		foreach($resource->types() as $type)
 		{
 			if( (string)$type == $type_i_uri )
 			{
-				$type_config = $type_i;
-				break;
+				$type_config = $class;
+				$type_config["id"] = $class_id;
+				break 2;
 			}      
 		}      
 	}      
 
 	$f3->set('format', $params["format"] );
+	$handler_id = $f3->get('default_handler');
+	if( isset( $type_config["handler"] ) ) { $handler_id = $type_config["handler"]; }
+
+	if( !isset( $type_config["content_template"] ) )
+	{
+		$type_config["content_template"] = $type_config["id"].".htm";
+	}
 
 	try {
-		include_once( "handlers/".$type_config["handler"].".php" );
+		include_once( "handlers/$handler_id.php" );
 	}
 	catch( Exception $e ) {
-		trigger_error( "Error during loading ".$type_config["handler"].": ".$e->getMessage() );
+		trigger_error( "Error during loading $handler_id: ".$e->getMessage() );
 		return;
 	}
-	$handlerClass = "{$type_config['handler']}Handler";
+	$handlerClass = "{$handler_id}Handler";
 	try {
-		$handler = new $handlerClass( $f3, $uri, $graph );
+		$handler = new $handlerClass( $f3, $uri, $graph, $type_config );
 	}
 	catch( Exception $e ) {
 		trigger_error( "Error during ".$handlerClass."->new( '$uri' ): ".$e->getMessage() );
@@ -205,3 +217,16 @@ function resolver($f3)
         return $ext;
 }
 
+function addRoutes($f3)
+{                               
+	$f3->route("GET|HEAD *.rdf.html", "FFRDF->debugView" );
+	$f3->route("GET|HEAD *.@format?@param", "FFRDF->pageView");
+	$f3->route("GET|HEAD *.@format", "FFRDF->pageView");
+	$f3->route("GET|HEAD *", "FFRDF->negotiate");
+}
+
+}
+
+$ffrdf = FFRDF::Instance();
+$f3->rdf = $ffrdf;
+return $f3;

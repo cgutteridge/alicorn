@@ -7,11 +7,11 @@
 <p>{{ @resource->getLanguageLiteral( "dbo:abstract" ) }}</p>
 
 <check if="{{ @resource->has( 'dbo:derivative' ) }}">
-  <p><strong>Derivative genres:</strong> <repeat group="{{ @resource->all( 'dbo:derivative' ) }}" value="{{ @g2 }}" counter="{{ @i }}"><check if="{{ @i>1 }}">, </check>{{ ffrdf_prettyLink(@g2) }}</repeat>.</p>
+  <p><strong>Derivative genres:</strong> <repeat group="{{ @resource->all( 'dbo:derivative' ) }}" value="{{ @g2 }}" counter="{{ @i }}"><check if="{{ @i>1 }}">, </check>{{ FFRDF::instance()->prettyLink(@g2) }}</repeat>.</p>
 </check>
 <check if="{{ @resource->has( 'dbo:musicSubgenre' ) }}">
-  <p><strong>Subgenres:</strong> <repeat group="{{ @resource->all( 'dbo:musicSubgenre' ) }}" value="{{ @g2 }}" counter="{{ @i }}"><check if="{{ @i>1 }}">, </check>{{ ffrdf_prettyLink(@g2) }}</repeat>.</p>
+  <p><strong>Subgenres:</strong> <repeat group="{{ @resource->all( 'dbo:musicSubgenre' ) }}" value="{{ @g2 }}" counter="{{ @i }}"><check if="{{ @i>1 }}">, </check>{{ FFRDF::instance()->prettyLink(@g2) }}</repeat>.</p>
 </check>
 <check if="{{ @resource->has( 'dbo:stylisticOrigin' ) }}">
-  <p><strong>Stylistic origins:</strong> <repeat group="{{ @resource->all( 'dbo:stylisticOrigin' ) }}" value="{{ @g2 }}" counter="{{ @i }}"><check if="{{ @i>1 }}">, </check>{{ ffrdf_prettyLink(@g2) }}</repeat>.</p>
+  <p><strong>Stylistic origins:</strong> <repeat group="{{ @resource->all( 'dbo:stylisticOrigin' ) }}" value="{{ @g2 }}" counter="{{ @i }}"><check if="{{ @i>1 }}">, </check>{{ FFRDF::instance()->prettyLink(@g2) }}</repeat>.</p>
 </check>

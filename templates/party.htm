@@ -9,10 +9,10 @@
 <check if="{{ @resource->has( '-dbo:party' ) }}">
   <h2>The party of:</h2>
   <repeat group="{{ @resource->all( '-dbo:party' ) }}" value="{{ @person }}">
-    <h3>{{ ffrdf_prettyLink(@person) }}</h3>
+    <h3>{{ FFRDF::instance()->prettyLink(@person) }}</h3>
     <p>{{ @person->getLanguageLiteral( "dbo:abstract" ) }}</p>
     <check if="{{ @person->has( 'dbo:genre' ) }}">
-      <p>Genre: <repeat group="{{ @person->all( 'dbo:genre' ) }}" value="{{ @genre }}" counter="{{ @i }}"><check if="{{ @i>1 }}">, </check>{{ ffrdf_prettyLink(@genre) }}</repeat>.</p>
+      <p>Genre: <repeat group="{{ @person->all( 'dbo:genre' ) }}" value="{{ @genre }}" counter="{{ @i }}"><check if="{{ @i>1 }}">, </check>{{ FFRDF::instance()->prettyLink(@genre) }}</repeat>.</p>
     </check>
   </repeat>
 </check>

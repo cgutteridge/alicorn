@@ -6,11 +6,11 @@
 <p>{{ @resource->getLanguageLiteral( "dbo:abstract" ) }}</p>
 
 <check if="{{ @resource->has( 'dbo:party' ) }}">
-  <p>Party: <repeat group="{{ @resource->all( 'dbo:party' ) }}" value="{{ @party }}" counter="{{ @i }}"><check if="{{ @i>1 }}">, </check>{{ ffrdf_prettyLink(@party) }}</repeat>.</p>
+  <p>Party: <repeat group="{{ @resource->all( 'dbo:party' ) }}" value="{{ @party }}" counter="{{ @i }}"><check if="{{ @i>1 }}">, </check>{{ FFRDF::instance()->prettyLink(@party) }}</repeat>.</p>
 </check>
 <check if="{{ @resource->has( 'dbo:genre' ) }}">
-  <p>Genre: <repeat group="{{ @resource->all( 'dbo:genre' ) }}" value="{{ @genre }}" counter="{{ @i }}"><check if="{{ @i>1 }}">, </check>{{ ffrdf_prettyLink(@genre) }}</repeat>.</p>
+  <p>Genre: <repeat group="{{ @resource->all( 'dbo:genre' ) }}" value="{{ @genre }}" counter="{{ @i }}"><check if="{{ @i>1 }}">, </check>{{ FFRDF::instance()->prettyLink(@genre) }}</repeat>.</p>
 </check>
 <check if="{{ @resource->has( 'dbo:birthPlace' ) }}">
-  <p>Birthplace: <repeat group="{{ @resource->all( 'dbo:birthPlace' ) }}" value="{{ @place }}" counter="{{ @i }}"><check if="{{ @i>1 }}">, </check>{{ ffrdf_prettyLink(@place) }}</repeat>.</p>
+  <p>Birthplace: <repeat group="{{ @resource->all( 'dbo:birthPlace' ) }}" value="{{ @place }}" counter="{{ @i }}"><check if="{{ @i>1 }}">, </check>{{ FFRDF::instance()->prettyLink(@place) }}</repeat>.</p>
 </check>

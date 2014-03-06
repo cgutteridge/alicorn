@@ -8,8 +8,14 @@ class ItemHandler
 	var $uri;
 	var $r;
 	var $endpoint;
+
+	var $html;
+	var $content;
+	var $template;
 	
-	function __construct( $f3, $uri, $g=null )
+	var $sparql_path = "./(a|rdfs:label)?";
+
+	function __construct( $f3, $uri, $g=null, $config=array() )
 	{
 		$this->f3 = $f3;
 		$this->uri = $uri;
@@ -17,9 +23,22 @@ class ItemHandler
 		$this->g = $g;
 		$this->r = $this->g->resource( $uri );
 		$this->endpoint = $f3->get( "sparql_endpoint" );
+
+		$this->html_template = $this->f3->get( "html_template" );
+		if( isset( $config["html_template"] ) ) 
+		{ 
+			$this->html_template = $config["html_template"]; 
+		}
+
+		$this->content_template = $this->f3->get( "content_template" );
+		if( isset( $config["content_template"] ) ) 
+		{ 
+			$this->content_template = $config["content_template"]; 
+		}
+
+		if( isset( $config["sparql_path"] ) ) { $this->sparql_path = $config["sparql_path"]; }
 	}
 	
-	var $sparql_path = "./(a|rdfs:label)?";
 
         function loadData()
         {
@@ -56,9 +75,9 @@ class ItemHandler
 
 		$format = $this->f3->get( "format" );
 	
-		if( $format == "raw" )  #TODO
+		if( $format == "raw" ) 
 		{
-			$this->f3->set('brand_file', $this->f3->get('raw_template'));
+			$this->f3->set('html_template', $this->f3->get('raw_template'));
 			return $this->serveHTML(); 
 		}
 
@@ -94,14 +113,14 @@ class ItemHandler
 
 	function serveHTML()
 	{
-		print "<p>Warning: serveHTML not defined.</p>";
-		return $this->serveRDFHTML();
+		$format = $this->f3->set( "content", $this->content_template );
+                print Template::instance()->render( $this->html_template );
 	}
 	
 	function serveRDFHTML()
 	{
-		print "<p>This is a dump of the data used to generate this page. It's intended for programmers and data experts only!</p>";
-		print $this->g->dump();
+		$format = $this->f3->set( "content", $this->f3->get( "rdfhtml_template" ) );
+                print Template::instance()->render( $this->html_template );
 	}
 	
 	function serveTTL() { print $this->g->serialize( "Turtle" ); }
