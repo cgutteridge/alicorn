@@ -1,0 +1,25 @@
+
+<check if="{{ @format != 'static' }}">
+  Formats:
+  <check if="{{ @format=='html' }}">
+    <true><strong>HTML</strong></true>
+    <false><a href="{{ @document_uri }}.html">HTML</a></false>
+  </check>
+  <check if="{{ @resource->has( 'geo:lat' ) && @resource->has( 'geo:long' ) }}">
+   |
+    <a href="{{ @document_uri }}.kml">KML</a>
+   |
+    <a href="{{ @document_uri }}.map">Map</a>
+  </check>
+   |
+  <a href="{{ @document_uri }}.ttl">Turtle</a>
+   |
+  <a href="{{ @document_uri }}.nt">N-Triples</a>
+   |
+  <a href="{{ @document_uri }}.rdf">RDF XML</a>
+   |
+  <check if="{{ @format=='debug' }}">
+    <true><strong>Debug</strong></true>
+    <false><a href="{{ @document_uri }}.debug">Debug</a></false>
+  </check>
+</check>

@@ -63,14 +63,14 @@ function prettyLink( $resource )
 
 function debugView( $f3, $params )
 {
-	$params["format"]="rdf.html"; 
-	pageView( $f3, $params );
+	$params["format"]="debug"; 
+	$this->pageView( $f3, $params );
 }
 
 function negotiate($f3)
 {
 	$uri = $f3->get('URI');
-	$ext = resolver( $f3 );
+	$ext = $this->resolver( $f3 );
 	header("Location: " . $uri . ".".$ext, true, 302);
 }
 
@@ -120,7 +120,19 @@ function pageView($f3, $params)
 		}      
 	}      
 
+	# the bit of the path minus the format
+	$document_uri = $f3->get( "URI" );
+	$document_uri = preg_replace( "/\?.*$/", "", $document_uri );
+	$document_uri = preg_replace( "/\.[^\.]*$/","", $document_uri );
+	$f3->set('document_uri', $document_uri );
+
 	$f3->set('format', $params["format"] );
+
+	if( isset( $type_config["map_zoom"] ) )
+	{
+		$f3->set('map_zoom',  $type_config["map_zoom"] );
+	}
+
 	$handler_id = $f3->get('default_handler');
 	if( isset( $type_config["handler"] ) ) { $handler_id = $type_config["handler"]; }
 
@@ -219,7 +231,6 @@ function resolver($f3)
 
 function addRoutes($f3)
 {                               
-	$f3->route("GET|HEAD *.rdf.html", "FFRDF->debugView" );
 	$f3->route("GET|HEAD *.@format?@param", "FFRDF->pageView");
 	$f3->route("GET|HEAD *.@format", "FFRDF->pageView");
 	$f3->route("GET|HEAD *", "FFRDF->negotiate");
@@ -228,5 +239,20 @@ function addRoutes($f3)
 }
 
 $ffrdf = FFRDF::Instance();
+
+# set some sensible defaults
+$f3->set("data_mode","SPARQL" );
+$f3->set("identity_path","a|rdfs:label" );
+$f3->set("default_handler","default" );
+$f3->set("html_template","html.htm" );
+$f3->set("page_template","page.htm" );
+$f3->set("content_template","default.htm" );
+$f3->set("raw_template","raw.htm" );
+$f3->set("debug_template","debug.htm" );
+$f3->set("map_template","embed_map.htm" );
+$f3->set("map_zoom","9" );
+$f3->set("format","static" );
+
+
 $f3->rdf = $ffrdf;
 return $f3;

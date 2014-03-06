@@ -86,8 +86,9 @@ class ItemHandler
 		if( $format == "ttl" )   { return $this->serveTTL(); }
 		if( $format == "nt" )    { return $this->serveNT(); }
 		if( $format == "kml" )   { return $this->serveKML(); }
+		if( $format == "map" )   { return $this->serveMap(); }
 		if( $format == "ics" )   { return $this->serveICS(); }
-		if( $format == "rdf.html" ) { return $this->serveRDFHTML(); }
+		if( $format == "debug" ) { return $this->serveDebug(); }
 	
 		$this->f3->error(404);
 	}
@@ -98,7 +99,8 @@ class ItemHandler
 
 		$map = array(
 			"html" => "text/html",
-			"rdfhtml" => "text/html",
+			"debug" => "text/html",
+			"map" => "text/html",
 			"kml" => "Content-type: application/vnd.google-earth.kml+xml",
 			"ttl" => "text/turtle",
 			"nt" => "text/plain",
@@ -117,11 +119,17 @@ class ItemHandler
                 print Template::instance()->render( $this->html_template );
 	}
 	
-	function serveRDFHTML()
+	function serveDebug()
 	{
-		$format = $this->f3->set( "content", $this->f3->get( "rdfhtml_template" ) );
+		$format = $this->f3->set( "content", $this->f3->get( "debug_template" ) );
                 print Template::instance()->render( $this->html_template );
 	}
+
+	function serveMap() 
+	{ 
+                print Template::instance()->render( $this->f3->get( "map_template" ) );
+	}
+
 	
 	function serveTTL() { print $this->g->serialize( "Turtle" ); }
 

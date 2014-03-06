@@ -1,0 +1,26 @@
+<check if='{{ @resource->has("geo:lat") && @resource->has("geo:long") }}'>
+  <div style='margin-bottom: 1em'>
+    <div style='width:200px; height:200px;' id='sidebar_map'></div>
+    <div style='width:200px; text-align:right'><a href="{{ @document_uri }}.map">View fullscreen</a></div>
+  </div>
+  <script src="http://openlayers.org/api/OpenLayers.js"></script>
+  <style>
+#sidebar_map .olControlAttribution { bottom: 0.5em; }
+  </style>
+  <script>
+var map = new OpenLayers.Map("sidebar_map");
+var wms = new OpenLayers.Layer.OSM();
+map.addLayer(wms);
+
+var lonLat = new OpenLayers.LonLat( {{@resource->get("geo:long")}}, {{@resource->get("geo:lat")}} )
+         .transform(
+            new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
+            map.getProjectionObject() // to Spherical Mercator Projection
+          );
+var zoom = {{ @map_zoom }};
+var markers = new OpenLayers.Layer.Markers( "Markers" );
+map.addLayer(markers);
+markers.addMarker(new OpenLayers.Marker(lonLat));
+map.setCenter( lonLat, zoom );
+  </script>
+</check>
