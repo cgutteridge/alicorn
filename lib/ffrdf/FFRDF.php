@@ -105,7 +105,18 @@ function pageView($f3, $params)
 	$type_config = array( "handler" => $f3->get('default_handler'), "id"=>"default" );
 
 	# try types in order
-	foreach( $f3->get( "class_order" ) as $class_id )
+	$order = @$f3->get( "class_order" );
+	if( isset( $order ) )
+	{
+		if( !is_array( $order ) ) { $order = array( $order ); }
+	}
+	else
+	{
+		# if no order given, just use any old order
+		$order = array_keys( $f3->get( "class" ) );
+	}
+
+	foreach( $order as $class_id )
 	{
 		$class = $f3->get( "class.$class_id" );
 		$type_i_uri = $graph->expandURI( $class["rdf_type"] );
