@@ -51,7 +51,14 @@ class ItemHandler
 		$opts =	array();
 		$opts["sparql-params"] = $this->f3->get("sparql_params");
 		$opts["union-then-sequence"] = true;
-		$n = $this->r->loadSPARQLPath( $this->endpoint, $path, $opts );
+		$n = 0;
+		try {
+			$n = $this->r->loadSPARQLPath( $this->endpoint, $path, $opts );
+		}
+		catch( Exception $e )
+		{
+    			print 'Caught exception: '.  $e->getMessage(). " (line ".$e->getLine()." of ".$e->getFile().")\n";
+		}
 		return $n;
 	}
 

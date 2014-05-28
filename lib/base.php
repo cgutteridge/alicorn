@@ -1603,9 +1603,9 @@ class Base extends Prefab {
 			}
 		);
 		set_error_handler(
-			function($code,$text) {
+			function($code,$text,$file,$line) {
 				if (error_reporting())
-					throw new ErrorException($text,$code);
+					throw new ErrorException($text." ($file line $line)",$code);
 			}
 		);
 		if (!isset($_SERVER['SERVER_NAME']))
