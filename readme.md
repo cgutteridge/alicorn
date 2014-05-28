@@ -1,3 +1,10 @@
+** Alicorn **
+
+Alicorn is a PHP front end to a SPARQL database. It is built on top of the Fat-Free framework.
+
+
+
+
 [![Fat-Free Framework](ui/images/logo.png)](http://fatfree.sf.net/)
 
 **A powerful yet easy-to-use PHP micro-framework designed to help you build dynamic and robust Web applications - fast!**
