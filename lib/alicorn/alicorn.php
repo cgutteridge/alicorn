@@ -2,10 +2,10 @@
 
 require('lib/arc2/ARC2.php');
 require('lib/Graphite/Graphite.php');
-require('lib/ffrdf/ItemHandler.php');
+require('lib/alicorn/itemhandler.php');
 $f3 = require_once( "lib/base.php" );
 
-class FFRDF extends Prefab {
+class Alicorn extends Prefab {
 
 function localPathToURI( $path )
 {
@@ -39,7 +39,7 @@ function URIToLocalURL( $uri )
 
 /// Library
 
-function initGraph( $f3 )
+static function initGraph( $f3 )
 {
 	$g = new Graphite();
 	$g->workAround4StoreBNodeBug = true;
@@ -78,7 +78,7 @@ function negotiate($f3)
 function pageView($f3, $params)
 {	      
 	$uri = $this->localPathToURI($f3->get("URI"));
-	$graph = $this->initGraph( $f3 ); 
+	$graph = Alicorn::initGraph( $f3 ); 
 	$resource = $graph->resource( $uri );
 
 	if( $f3->get( "data_mode" ) == "SPARQL" )
@@ -242,14 +242,14 @@ function resolver($f3)
 
 function addRoutes($f3)
 {                               
-	$f3->route("GET|HEAD *.@format?@param", "FFRDF->pageView");
-	$f3->route("GET|HEAD *.@format", "FFRDF->pageView");
-	$f3->route("GET|HEAD *", "FFRDF->negotiate");
+	$f3->route("GET|HEAD *.@format?@param", "Alicorn->pageView");
+	$f3->route("GET|HEAD *.@format", "Alicorn->pageView");
+	$f3->route("GET|HEAD *", "Alicorn->negotiate");
 }
 
 }
 
-$ffrdf = FFRDF::Instance();
+$alicorn = Alicorn::Instance();
 
 # set some sensible defaults
 $f3->set("data_mode","SPARQL" );
@@ -265,5 +265,5 @@ $f3->set("map_zoom","9" );
 $f3->set("format","static" );
 
 
-$f3->rdf = $ffrdf;
+$f3->rdf = $alicorn;
 return $f3;

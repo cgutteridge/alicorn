@@ -19,7 +19,7 @@ class ItemHandler
 	{
 		$this->f3 = $f3;
 		$this->uri = $uri;
-		if( !isset( $g ) ) { $g = ffrdf_initGraph( $f3 ); }
+		if( !isset( $g ) ) { $g = Alicorn::initGraph( $f3 ); }
 		$this->g = $g;
 		$this->r = $this->g->resource( $uri );
 		$this->endpoint = $f3->get( "sparql_endpoint" );

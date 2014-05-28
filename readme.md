@@ -2,7 +2,7 @@
 
 Alicorn is a PHP front end to a SPARQL database. It is built on top of the Fat-Free framework.
 
-
+Like F3, Alicorn is available under GPL v3.
 
 
 [![Fat-Free Framework](ui/images/logo.png)](http://fatfree.sf.net/)
