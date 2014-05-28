@@ -1,4 +1,4 @@
-** Alicorn **
+# Alicorn
 
 Alicorn is a PHP front end to a SPARQL database. It is built on top of the Fat-Free framework.
 
