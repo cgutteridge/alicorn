@@ -1,0 +1,24 @@
+#!
+
+# this script copies the example configuration files into their appropriate 
+# locations.
+#
+# it does not do anything smart about being run twice. It'll overwrite stuff
+# so be careful.
+# 
+# As a stopgap it chmods itself to 400 after running to prevent it being run
+# again.
+
+BASE_DIR=`dirname "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"`
+
+echo $BASE_DIR
+
+cp -av $BASE_DIR/alicorn.ini.example $BASE_DIR/alicorn.ini
+cp -av $BASE_DIR/index.php.example $BASE_DIR/index.php
+mkdir -v $BASE_DIR/templates
+cp -av $BASE_DIR/templates.example/* $BASE_DIR/templates
+echo "Setting this file to to prevent it being run again by accident."
+chmod 400 $BASE_DIR/bin/init-alicorn
+echo ""
+echo "You should now edit alicorn.ini and templates/ to configure your site."
+
